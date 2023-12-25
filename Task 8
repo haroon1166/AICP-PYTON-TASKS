@@ -1,0 +1,142 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// Define some constants for the cost and time of hiring a boat
+const double HOUR_COST = 20.0; // Cost of hiring a boat for one hour in dollars
+const double HALF_HOUR_COST = 12.0; // Cost of hiring a boat for half an hour in dollars
+const int START_TIME = 10; // Start time of hiring a boat in hours
+const int END_TIME = 17; // End time of hiring a boat in hours
+
+// Define a structure to store the information of a boat
+struct Boat {
+    int number; // The number of the boat
+    double money; // The money taken by the boat in a day in dollars
+    double hours; // The total hours hired by the boat in a day
+    int return_time; // The time when the boat must be returned in hours
+};
+
+// Define a function to compare two boats by their money taken
+bool compareBoat(const Boat& b1, const Boat& b2) {
+    return b1.money > b2.money;
+}
+
+// Define a function to calculate the money taken in a day for one boat
+void calculateMoneyForOneBoat(Boat& boat) {
+    cout << "\nBoat " << boat.number << ":\n";
+    double duration;
+    double cost;
+    int hireTime;
+
+    cout << "Enter the duration of hiring (0.5 or 1) hour(s): ";
+    cin >> duration;
+
+    if (duration == 0.5 || duration == 1) {
+        if (duration == 0.5) {
+            cost = HALF_HOUR_COST;
+        } else {
+            cost = HOUR_COST;
+        }
+
+        cout << "Enter the time when the boat is hired (between 10 and 16): ";
+        cin >> hireTime;
+
+        if (hireTime >= START_TIME && hireTime < END_TIME) {
+            boat.money += cost;
+            boat.hours += duration;
+            boat.return_time = hireTime + duration;
+
+            if (boat.return_time <= END_TIME) {
+                cout << "Hired for " << duration << " hours starting at " << hireTime << ":00.\n";
+                cout << "Must be returned at " << boat.return_time << ":00.\n";
+                cout << "Total cost: $" << cost << ".\n";
+            } else {
+                cout << "Cannot be hired. Must be returned before 17:00.\n";
+            }
+        } else {
+            cout << "Cannot be hired before 10:00 or after 16:00.\n";
+        }
+    } else {
+        cout << "Invalid duration. Please enter 0.5 or 1.\n";
+    }
+}
+
+// Define a function to find the next boat available
+int findNextBoatAvailable(const vector<Boat>& boats, int currentTime) {
+    int index = -1;
+    int available = 0;
+    int earliest = END_TIME + 1;
+
+    for (int i = 0; i < boats.size(); i++) {
+        if (boats[i].return_time <= currentTime) {
+            available++;
+
+            if (index == -1) {
+                index = i;
+            }
+        } else {
+            if (boats[i].return_time < earliest) {
+                earliest = boats[i].return_time;
+            }
+        }
+    }
+
+    cout << "Total available boats: " << available << "\n";
+
+    if (available == 0) {
+        cout << "The earliest time a boat will be available is " << earliest << ":00.\n";
+    }
+
+    return index;
+}
+
+// Define a function to calculate the money taken for all the boats at the end of the day
+void calculateMoneyForAllBoats(const vector<Boat>& boats) {
+    double totalMoney = 0.0;
+    double totalHours = 0.0;
+    int unusedBoats = 0;
+    int mostUsedBoat = 0;
+
+    for (int i = 0; i < boats.size(); i++) {
+        totalMoney += boats[i].money;
+        totalHours += boats[i].hours;
+
+        if (boats[i].hours == 0) {
+            unusedBoats++;
+        }
+
+        if (boats[i].hours > boats[mostUsedBoat].hours) {
+            mostUsedBoat = i;
+        }
+    }
+
+    cout << "\nReport for the owner:\n";
+    cout << "Total money taken: $" << totalMoney << "\n";
+    cout << "Total hours hired: " << totalHours << "\n";
+    cout << "Unused boats: " << unusedBoats << "\n";
+    cout << "Most used boat: Boat " << boats[mostUsedBoat].number << " with " << boats[mostUsedBoat].hours << " hours.\n";
+}
+
+int main() {
+    vector<Boat> boats(10); // Initialize 10 boats
+
+    int currentTime = START_TIME;
+    int index;
+
+    cout << "Task 1: Calculate the money taken in a day for one boat\n";
+    for (int i = 0; i < boats.size(); i++) {
+        calculateMoneyForOneBoat(boats[i]);
+    }
+
+    cout << "\nTask 2: Find the next boat available\n";
+    index = findNextBoatAvailable(boats, currentTime);
+    if (index != -1) {
+        cout << "Next available boat: Boat " << boats[index].number << "\n";
+    }
+
+    cout << "\nTask 3: Calculate the money taken for all the boats at the end of the day\n";
+    calculateMoneyForAllBoats(boats);
+
+    return 0;
+}
