@@ -46,7 +46,7 @@ for item in selected_additonal_items:
 print("you have chosen the following additional item:")
 for item in selected_additonal_items:
     print(item,ITEM_Description[ITEM_Codes.index(item)])
-print("the new price of the computer is : ",computer_price)
+print("the new price of the computer is : ", computer_price)
 
 
 # Task 03
