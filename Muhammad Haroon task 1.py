@@ -25,8 +25,9 @@ print("The total price of the computer is :",computer_price)
 # Task 02
 print("do you want to purchase any item? (Y/N)")
 answer=input()
-if answer.upper()=="Y":
+if answer.upper()=="Y" :
     additional_items=[]
+    
     for i in range(len(ITEM_Codes)):
         if ITEM_Codes[i] not in [case_code,ram_Code,hdd_code]:
             print(ITEM_Codes[i],ITEM_Description[i],ITEM_Price[i])
